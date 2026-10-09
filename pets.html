@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Скрещивание питомцев</title>
+<meta name="description" content="Гайд по скрещиванию питомцев: свойства, наследование, как растить уровень свойства. Pet breeding guide (RU/EN).">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prata&family=Golos+Text:wght@400;600&display=swap">
+<style>
+:root{--bg:#16111a;--surface:#1f1824;--surface2:#271e2d;--line:#352a3a;--ink:#efe6ec;--muted:#a998a4;--accent:#e0607e;
+--d4:#e0607e;--d3:#e39a5a;--d2:#d6c46a;--d1:#7fb48f;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Golos Text",system-ui,sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:32px 16px 64px}
+a{color:var(--accent)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.top a.back{color:var(--muted);text-decoration:none;font-size:.92rem}
+.top a.back:hover{color:var(--ink)}
+.lang{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.lang button{background:none;border:0;color:var(--muted);font:600 .85rem "Golos Text",sans-serif;padding:6px 14px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--accent);color:#1a0f14}
+h1{font:400 2rem/1.2 "Prata",Georgia,serif;margin:0 0 8px}
+h1 span{color:var(--accent)}
+h2{font:400 1.45rem/1.25 "Prata",Georgia,serif;margin:44px 0 14px}
+h3{font:600 1rem "Golos Text",sans-serif;margin:0 0 6px}
+p{margin:0 0 14px}
+.lead{color:var(--muted);max-width:760px}
+.muted{color:var(--muted)}
+ul,ol{margin:0 0 14px;padding-left:22px}
+li{margin-bottom:8px}
+li b,p b{color:var(--ink)}
+.tag{display:inline-block;font-size:.72rem;font-weight:600;letter-spacing:.02em;padding:1px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted);vertical-align:1px;white-space:nowrap}
+.tag.off{border-color:#4d6b58;color:#9fd0ad}
+.tag.pl{border-color:#6b5a3d;color:#e4c48a}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+.terms{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin:0}
+.terms div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.terms dt{font-weight:600}
+.terms dd{margin:2px 0 0;color:var(--muted);font-size:.9rem}
+.thr{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0 6px;max-width:560px}
+.thr div{background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
+.thr b{display:block;font:400 1.35rem "Prata",serif}
+.thr small{color:var(--muted);font-size:.78rem}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px}
+.filters button{background:var(--surface);border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:5px 12px;font:600 .82rem "Golos Text",sans-serif;cursor:pointer}
+.filters button[aria-pressed="true"]{border-color:var(--accent);color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.trait{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.trait .shot{display:block;background:#120d15;border:0;border-bottom:1px solid var(--line);cursor:zoom-in;padding:0;width:100%}
+.trait .shot img{display:block;width:100%;height:220px;object-fit:cover;object-position:top}
+.trait .body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
+.trait .name b{font:400 1.2rem "Prata",serif}
+.attrs{display:flex;gap:6px;flex-wrap:wrap}
+.attrs span{background:var(--surface2);border:1px solid var(--line);border-radius:6px;padding:1px 8px;font-size:.82rem}
+.eff{font-size:.9rem}
+.dom{display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--muted)}
+.dots{display:inline-flex;gap:3px}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.note{font-size:.88rem;color:var(--muted);border-top:1px dashed var(--line);padding-top:8px;margin-top:auto}
+.steps{counter-reset:s;list-style:none;padding:0;display:grid;gap:10px}
+.steps li{counter-increment:s;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px 14px 58px;position:relative;margin:0}
+.steps li::before{content:counter(s);position:absolute;left:16px;top:13px;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#1a0f14;font:600 .9rem/28px "Golos Text";text-align:center}
+.tips{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.tips .box p{color:var(--muted);font-size:.92rem;margin:0}
+.tips .warn{border-color:#6b3040}
+.tips .warn h3{color:var(--accent)}
+footer{margin-top:48px;color:var(--muted);font-size:.85rem}
+dialog{border:0;padding:0;background:transparent;max-width:min(92vw,520px)}
+dialog::backdrop{background:rgba(8,5,10,.85)}
+dialog img{display:block;width:100%;border-radius:10px}
+dialog button{position:absolute;top:8px;right:8px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:999px;width:34px;height:34px;font-size:1.1rem;cursor:pointer}
+[hidden]{display:none!important}
+@media (max-width:520px){h1{font-size:1.6rem}.thr{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="top">
+  <a class="back" href="index.html" data-t="back"></a>
+  <div class="lang" role="group" aria-label="Language">
+    <button type="button" data-lang="ru" aria-pressed="true">RU</button>
+    <button type="button" data-lang="en" aria-pressed="false">EN</button>
+  </div>
+</div>
+
+<h1 data-t="h1"></h1>
+<p class="lead" data-t="lead"></p>
+<p class="muted" style="font-size:.88rem" data-t="legend"></p>
+
+<h2 data-t="h_terms"></h2>
+<dl class="terms" id="terms"></dl>
+
+<h2 data-t="h_basics"></h2>
+<ul id="basics"></ul>
+
+<h2 data-t="h_levels"></h2>
+<div class="box">
+  <p data-t="levels"></p>
+  <div class="thr">
+    <div><b>—</b><small data-t="lv1"></small></div>
+    <div><b>60</b><small data-t="lv2"></small></div>
+    <div><b>90</b><small data-t="lv3"></small></div>
+    <div><b>120</b><small data-t="lv4"></small></div>
+  </div>
+  <p class="muted" style="font-size:.88rem;margin:8px 0 0" data-t="levels_note"></p>
+</div>
+
+<h2 data-t="h_traits"></h2>
+<p class="muted" data-t="traits_lead"></p>
+<div class="filters" id="filters"></div>
+<div class="grid" id="grid"></div>
+<p class="muted" style="font-size:.88rem;margin-top:14px" data-t="traits_note"></p>
+
+<h2 data-t="h_inherit"></h2>
+<ul id="inherit"></ul>
+
+<h2 data-t="h_steps"></h2>
+<p data-t="steps_lead"></p>
+<ol class="steps" id="steps"></ol>
+
+<h2 data-t="h_tips"></h2>
+<div class="tips" id="tips"></div>
+
+<footer data-t="footer"></footer>
+</div>
+
+<dialog id="zoom"><button type="button" aria-label="Close">×</button><img alt=""></dialog>
+
+<script>
+const OFF = {ru:'<span class="tag off">из игры</span>', en:'<span class="tag off">from the game</span>'};
+const PL  = {ru:'<span class="tag pl">опыт игроков</span>', en:'<span class="tag pl">player tip</span>'};
+
+const T = {
+ru:{
+ title:'Скрещивание питомцев', back:'← Все калькуляторы',
+ h1:'Скрещивание <span>питомцев</span>',
+ lead:'Как поднять уровень свойства питомца: что передаётся потомку, как подбирать пару и каких ошибок избегать.',
+ legend:`${OFF.ru} — так написано в справке самой игры. ${PL.ru} — вывод опытного игрока, в игре этого не пишут.`,
+ h_terms:'Словарь', h_basics:'Как устроено скрещивание', h_levels:'Уровни свойства', h_traits:'Все свойства',
+ h_inherit:'Что получает потомок', h_steps:'Как поднять свойство: по шагам', h_tips:'Главное',
+ levels:'Свойство повышается само, когда <b>оба</b> главных атрибута питомца дорастают до нужного числа. На скриншотах ниже зелёное число — уже хватает, красное — пока нет.',
+ lv1:'Ур. 1 · ничего не даёт', lv2:'Ур. 2', lv3:'Ур. 3', lv4:'Ур. 4',
+ levels_note:'Исключение — Алхимия: ей нужно 50 / 80 / 110.',
+ traits_lead:'Нажмите на скриншот, чтобы открыть его целиком. Точки показывают, насколько легко свойство передаётся потомку, если у второго родителя другое свойство: чем больше точек, тем легче.',
+ traits_note:'В игре есть ещё свойство «Палата Порталов» (больше монет очищения за отдых). Скриншота его нет.',
+ all:'Все', dom_hi:'Передаются легко', dom_mid:'Средне', dom_lo:'Передаются плохо',
+ dom:'Передаётся', main:'Главные атрибуты',
+ steps_lead:`За одно скрещивание атрибут вырастает максимум на <b>30</b> ${PL.ru}. Значит, чтобы дойти с ур. 2 (60) до ур. 4 (120), нужно несколько поколений: вывели потомка — вырастили — скрестили снова.`,
+ footer:'Источники: справка игры (раздел о питомцах) и заметки игрока из чата «Питомцы — свойства».'
+},
+en:{
+ title:'Pet Breeding Guide', back:'← All calculators',
+ h1:'Pet <span>breeding</span>',
+ lead:'How to raise a pet\'s trait level: what the offspring inherits, how to choose a partner, and which mistakes to avoid.',
+ legend:`${OFF.en} — stated in the game's own help. ${PL.en} — learned by an experienced player; the game doesn't say it.`,
+ h_terms:'Glossary', h_basics:'How breeding works', h_levels:'Trait levels', h_traits:'All traits',
+ h_inherit:'What the offspring gets', h_steps:'Raising a trait, step by step', h_tips:'Key points',
+ levels:'A trait levels up by itself once <b>both</b> of the pet\'s main attributes reach the required number. In the screenshots below a green number means it\'s enough, red means not yet.',
+ lv1:'Lv 1 · does nothing', lv2:'Lv 2', lv3:'Lv 3', lv4:'Lv 4',
+ levels_note:'Exception: Alchemy needs 50 / 80 / 110.',
+ traits_lead:'Tap a screenshot to see it in full. Dots show how easily a trait passes to the offspring when the other parent has a different trait: more dots, easier. Screenshots are from the Russian version; names are translated.',
+ traits_note:'The game also has a "Portal Chamber" trait (more purification coins from rest). There is no screenshot of it.',
+ all:'All', dom_hi:'Pass on easily', dom_mid:'Average', dom_lo:'Pass on poorly',
+ dom:'Passes on', main:'Main attributes',
+ steps_lead:`One breeding raises an attribute by <b>30</b> at most ${PL.en}. So getting from lv 2 (60) to lv 4 (120) takes several generations: breed, raise the offspring, breed again.`,
+ footer:'Sources: the game\'s help on pets and a player\'s notes from the "Pets — traits" chat.'
+}};
+
+const TERMS = {
+ru:[
+ ['Свойство','Особый бонус питомца, например +20% доверия в ложе. У каждого питомца одно свойство.'],
+ ['Главные атрибуты','Два из пяти атрибутов питомца, от которых зависит уровень его свойства.'],
+ ['Базовые атрибуты','Атрибуты «от рождения», без бонусов. Только они передаются потомку.'],
+ ['Общие атрибуты','Базовые плюс бонусы от мутации, уровней и групп. Видны в игре, но потомку не передаются.'],
+ ['Инициатор','Тот, кто запускает скрещивание и платит Куколками. Яйцо получает только он.'],
+ ['Доминантность','Насколько легко свойство переходит к потомку, когда у родителей разные свойства.']],
+en:[
+ ['Trait','A pet\'s special bonus, e.g. +20% Lodge trust. Each pet has one trait.'],
+ ['Main attributes','Two of the pet\'s five attributes that decide its trait level.'],
+ ['Base attributes','The pet\'s "born with" values, without bonuses. Only these pass to the offspring.'],
+ ['Total attributes','Base plus bonuses from mutation, levels and groups. Shown in game, but not inherited.'],
+ ['Initiator','The player who starts the breeding and pays Pupae. Only they get the egg.'],
+ ['Dominance','How easily a trait passes to the offspring when the parents have different traits.']]};
+
+const A = {st:{ru:'Стойкость',en:'Fortitude'},ag:{ru:'Ловкость',en:'Agility'},lo:{ru:'Верность',en:'Loyalty'},in:{ru:'Инстинкт',en:'Instinct'},ch:{ru:'Обаяние',en:'Charm'}};
+
+// d: dominance 1..4 (null = unknown), g: filter group
+const TRAITS = [
+ {id:'conclave',a:['st','ag'],d:null,g:'mid',ru:{n:'Конклав',e:'Больше очков совета',v:'+2 / 4 / 6%',dl:'плохо, получить сложно',r:'Самое нужное свойство. Питомец с ним стоит 25–40 тыс., обычно его покупают за донат. Чтобы перенести Конклав своему питомцу, пробуют скрещивать его с Грибами, Бутылкой или Штангой.'},en:{n:'Conclave',e:'More council points',v:'+2 / 4 / 6%',dl:'poorly, hard to get',r:'The most wanted trait. A pet with it costs 25–40k and is usually bought with real money. To move Conclave onto your own pet, players breed it with Mushrooms, Bottle or Barbell.'}},
+ {id:'lodge',a:['in','lo'],d:4,g:'hi',ru:{n:'Ложа',e:'Больше доверия в ложе',v:'+20 / 40 / 60%',dl:'очень легко',r:'Доверие поднимает кровные узы, а они — господство. Стоит вывести одним из первых: со временем даёт заметный прирост.'},en:{n:'Lodge',e:'More Lodge trust',v:'+20 / 40 / 60%',dl:'very easily',r:'Trust raises blood bonds, and those raise dominance. Worth getting early: a noticeable gain over time.'}},
+ {id:'league',a:['ag','lo'],d:2,g:'mid',ru:{n:'Лига',e:'Больше авторитета в лиге',v:'+50 / 100 / 150',dl:'средне',r:'Стоит вывести одним из первых.'},en:{n:'League',e:'More League prestige',v:'+50 / 100 / 150',dl:'average',r:'Worth getting early.'}},
+ {id:'wells',a:['st','in'],d:3,g:'hi',ru:{n:'Колодцы',e:'Больше авторитета с Колодцев слёз в Нижнем мире',v:'+10 / 20 / 30%',dl:'легко',r:'Полезное и важное.'},en:{n:'Wells',e:'More prestige from the Wells of Tears in the Underworld',v:'+10 / 20 / 30%',dl:'easily',r:'Useful and important.'}},
+ {id:'crystals',a:['ch','st'],d:2,g:'mid',ru:{n:'Кристаллы',e:'Больше капитала и вклада гильдии с Кристаллитов',v:'+10 / 20% …',dl:'средне',r:'Важное: капитал гильдии нужен для приливов и снабжения в войне.'},en:{n:'Crystals',e:'More guild capital and contribution from Crystallites',v:'+10 / 20% …',dl:'average',r:'Important: guild capital pays for tides and war supplies.'}},
+ {id:'arena',a:['st','ag'],d:4,g:'hi',ru:{n:'Арена',e:'Первые 1 / 2 / 3 смотрителя за день получают двойные награды за карты',v:'',dl:'очень легко',r:'Полезное: больше талантов или навыков с арены.'},en:{n:'Arena',e:'Your first 1 / 2 / 3 keepers each day get double card rewards',v:'',dl:'very easily',r:'Useful: more talents or skills from the arena.'}},
+ {id:'abyss',a:['ch','in'],d:2,g:'mid',ru:{n:'Тёмная пропасть',e:'Больше Тёмных монет',v:'+10 / 20 / 30%',dl:'средне',r:'Окупается со временем. Многие его недооценивают.'},en:{n:'Dark Abyss',e:'More Dark Coins',v:'+10 / 20 / 30%',dl:'average',r:'Pays off over time. Many players underrate it.'}},
+ {id:'alchemy2',a:['st','ag'],d:3,g:'hi',ru:{n:'Алхимия II',e:'Шанс 20 / 40% … получить вдвое больше крови и мышей с Реторт Близости, Силы, Интеллекта и Талантов',v:'',dl:'легко',r:'Хорошее свойство.'},en:{n:'Alchemy II',e:'20 / 40% … chance to get double blood and bats from the Retorts of Intimacy, Strength, Intellect and Talents',v:'',dl:'easily',r:'A good trait.'}},
+ {id:'alchemy1',a:['ch','lo'],d:3,g:'hi',ru:{n:'Алхимия I',e:'То же, но с Реторт Хаоса, Влечения, Харизмы и Воли',v:'',dl:'легко',r:'Полезна меньше, чем Алхимия II. Нужна, если вы копите мышей и кровь и прокачали Реторту влечения.'},en:{n:'Alchemy I',e:'Same, but from the Retorts of Chaos, Desire, Charisma and Will',v:'',dl:'easily',r:'Less useful than Alchemy II. Worth it if you stockpile bats and blood and have levelled the Retort of Desire.'}},
+ {id:'dates',a:['ch','lo'],d:2,g:'mid',ru:{n:'Свидания',e:'Больше доверия за свидания',v:'+20 / 40 / 60%',dl:'средне',r:'Похоже на Ложу, но бонус идёт только за свидания с партнёрами.'},en:{n:'Dates',e:'More trust from dates',v:'+20 / 40 / 60%',dl:'average',r:'Like Lodge, but the bonus only applies to dates with partners.'}},
+ {id:'bottle',a:['ag','in'],d:1,g:'lo',ru:{n:'Бутылка',e:'Больше очков навыков на тренировках',v:'+10 / 20 / 30%',dl:'плохо',r:'Полезное. Хорошо растёт, если скрещивать её со Штангой.'},en:{n:'Bottle',e:'More skill points from training',v:'+10 / 20 / 30%',dl:'poorly',r:'Useful. Grows well when bred with Barbell.'}},
+ {id:'barbell',a:['st','lo'],d:1,g:'lo',ru:{n:'Штанга',e:'Больше опыта таланта на тренировках',v:'+20 / 40 / 60%',dl:'плохо',r:'Растёт медленно. Лучше растёт в паре с Бутылкой.'},en:{n:'Barbell',e:'More talent XP from training',v:'+20 / 40 / 60%',dl:'poorly',r:'Grows slowly. Does better paired with Bottle.'}},
+ {id:'mushrooms',a:['st','ag'],d:1,g:'lo',ru:{n:'Грибы',e:'Больше опыта таланта с Мракоморов в Нижнем мире',v:'+10 / 20 / 30%',dl:'плохо',r:'Полезно, если вы копите господство. Иначе можно не торопиться.'},en:{n:'Mushrooms',e:'More talent XP from Gloomshrooms in the Underworld',v:'+10 / 20 / 30%',dl:'poorly',r:'Useful if you are building dominance. Otherwise no rush.'}},
+ {id:'fishing',a:['st','lo'],d:4,g:'hi',ru:{n:'Рыбалка',e:'Первое обновление попытки бесплатно для 1 / 2 / 3 смотрителей',v:'',dl:'легче всех',r:'Самое бесполезное свойство, но передаётся потомку легче всех и часто «перебивает» нужное.'},en:{n:'Fishing',e:'First attempt refresh is free for 1 / 2 / 3 keepers',v:'',dl:'most easily of all',r:'The least useful trait, yet it passes on most easily and often overrides the one you want.'}},
+];
+
+const BASICS = {
+ru:[
+ `<b>Скрещивать можно только взрослого питомца.</b> После скрещивания он какое-то время отдыхает. ${OFF.ru}`,
+ `<b>Вы запускаете скрещивание сами</b> — платите Куколками, выбираете чужого питомца и забираете яйцо себе. ${OFF.ru}`,
+ `<b>Вы даёте своего питомца другим</b> — яйцо получает другой игрок. Вам дают Куколки, если у питомца была энергия; если энергия 0 — только обычную награду за помощь. ${OFF.ru}`,
+ `<b>Энергия.</b> Каждая помощь другим тратит 1 энергию питомца. Когда вы сами запускаете скрещивание, энергия вашего питомца не тратится. ${OFF.ru}`,
+ `<b>Перед скрещиванием игра показывает прогноз</b> — какие примерно будут атрибуты и свойства у яйца. Смотрите его до подтверждения. ${OFF.ru}`,
+ `<b>Яйцо попадает в инкубатор.</b> Пока оно не начало вылупляться, на него можно применять мутагены. Маркер питомца позволяет ограничить, какие виды могут вылупиться. ${OFF.ru}`,
+ `<b>Вид и класс.</b> Если оба родителя одного типа, потомок почти наверняка будет того же типа. Класс заранее не известен. ${OFF.ru}`,
+ `<b>Особые питомцы.</b> Особый потомок может получиться, только если особый питомец — ваш и скрещивание запускаете вы. Из обычных питомцев особого не вывести. ${OFF.ru}`],
+en:[
+ `<b>Only adult pets can breed.</b> After breeding, a pet rests for a while. ${OFF.en}`,
+ `<b>You start the breeding</b> — pay Pupae, pick another player's pet, and the egg is yours. ${OFF.en}`,
+ `<b>You lend your pet to others</b> — the other player gets the egg. You get Pupae if your pet had energy; at 0 energy, only the standard helper reward. ${OFF.en}`,
+ `<b>Energy.</b> Each time your pet helps others it spends 1 energy. When you start the breeding yourself, your pet spends none. ${OFF.en}`,
+ `<b>Before breeding, the game shows a preview</b> of the egg's likely attributes and traits. Check it before confirming. ${OFF.en}`,
+ `<b>The egg goes to the incubator.</b> Before it starts hatching you can apply mutagens to it. A Pet Marker limits which species can hatch. ${OFF.en}`,
+ `<b>Species and class.</b> If both parents are the same type, the offspring will almost certainly be that type too. Class is unknown in advance. ${OFF.en}`,
+ `<b>Special pets.</b> A special offspring is only possible if the special pet is yours and you start the breeding. You can't get one from normal pets. ${OFF.en}`]};
+
+const INHERIT = {
+ru:[
+ `<b>Атрибуты потомка считаются от базовых атрибутов родителей.</b> Бонусы от мутации, уровней и групп не передаются. ${OFF.ru}`,
+ `<b>Свойство и главные атрибуты потомок берёт от одного из родителей.</b> Свойство эволюции не передаётся. ${OFF.ru}`,
+ `<b>Умения</b> почти всегда передаются. ${OFF.ru}`,
+ `<b>Одинаковые свойства не складываются.</b> Если у вас несколько питомцев с одним свойством, работает только самый сильный. ${OFF.ru}`,
+ `<b>Если у родителей разные свойства</b>, потомку чаще достаётся то, что передаётся легче (больше точек в карточке). Поэтому нужное свойство проще «забрать», скрещивая его с питомцем, чьё свойство передаётся плохо. ${PL.ru}`,
+ `<b>Совпадение главных атрибутов помогает.</b> Если у обоих родителей главные атрибуты одинаковые (например, Верность и Стойкость), они растут быстрее. Особенно заметно на высоких уровнях. ${PL.ru}`],
+en:[
+ `<b>The offspring's attributes are based on the parents' base attributes.</b> Bonuses from mutation, levels and groups are not passed on. ${OFF.en}`,
+ `<b>The offspring takes its trait and main attributes from one of the parents.</b> Evolved traits are not passed on. ${OFF.en}`,
+ `<b>Skills</b> are almost always passed on. ${OFF.en}`,
+ `<b>Identical traits don't add up.</b> If several of your pets share a trait, only the strongest one works. ${OFF.en}`,
+ `<b>If the parents have different traits</b>, the offspring more often gets the one that passes on more easily (more dots on its card). So a trait you want is easier to "take" by breeding it with a pet whose trait passes on poorly. ${PL.en}`,
+ `<b>Matching main attributes help.</b> If both parents have the same main attributes (e.g. Loyalty and Fortitude), those grow faster. Most noticeable at higher levels. ${PL.en}`]};
+
+const STEPS = {
+ru:[
+ '<b>Выберите одно свойство</b>, которое хотите поднять. Достаточно одного сильного питомца на свойство: второй с тем же свойством ничего не добавит.',
+ '<b>Вырастите питомца до взрослого.</b> С каждым уровнем два случайных атрибута растут на 1, причём главные — чаще остальных.',
+ '<b>Найдите пару с тем же свойством.</b> Лучше всего — с теми же главными атрибутами и базовыми значениями не ниже ваших. Если у пары какие-то атрибуты ниже, игра предупредит: потомок может их не унаследовать.',
+ '<b>Посмотрите прогноз.</b> Если скрещивание ценное, используйте <b>Тотем стойкости</b>: с ним атрибуты потомка не будут ниже, чем у вашего питомца.',
+ '<b>Запустите скрещивание сами</b>, чтобы яйцо досталось вам.',
+ '<b>Мутаген.</b> Если у яйца уже нужное свойство, мутаген поможет быстрее поднять уровень. Если вы пытаетесь получить другое свойство — не используйте его.',
+ '<b>Вырастите потомка и повторите.</b> Самый сильный по базовым атрибутам становится следующим родителем. Слабых можно выпустить (часть ресурсов вернётся) или давать другим для скрещивания за Куколки.'],
+en:[
+ '<b>Pick one trait</b> to raise. One strong pet per trait is enough: a second pet with the same trait adds nothing.',
+ '<b>Raise the pet to adult.</b> Each level adds 1 to two random attributes, and main attributes are picked more often.',
+ '<b>Find a partner with the same trait.</b> Best of all: the same main attributes and base values no lower than yours. If the partner is lower anywhere, the game warns the offspring may not inherit those values.',
+ '<b>Check the preview.</b> For a valuable breeding, use a <b>Fortitude Totem</b>: the offspring\'s attributes won\'t be lower than your pet\'s.',
+ '<b>Start the breeding yourself</b> so the egg is yours.',
+ '<b>Mutagen.</b> If the egg already has the trait you want, a mutagen helps level it faster. If you are trying to get a different trait, don\'t use one.',
+ '<b>Raise the offspring and repeat.</b> The one with the best base attributes becomes the next parent. Release weaker ones (you get some resources back) or lend them out for Pupae.']};
+
+const TIPS = {
+ru:[
+ ['warn','Не используйте мутаген, если меняете свойство',`Мутаген повышает общие атрибуты, а не базовые, и снижает шанс, что свойство сменится на нужное. ${PL.ru}`],
+ ['','Смотрите на базовые атрибуты',`Потомку передаются только они. В списке питомцев есть сортировка «Базовый общий атрибут». ${OFF.ru}`],
+ ['','Пробуждённые питомцы — лучшие родители',`Если главные атрибуты дошли до нужных значений, у питомца появляется значок «пробуждённый». Его свойство растёт легче. ${OFF.ru}`],
+ ['','Особого питомца скрещивайте только сами',`Если отдать его в помощь другому игроку, особого потомка не будет. ${OFF.ru}`],
+ ['','Эволюция — отдельная история',`Мутировавший питомец может эволюционировать и получить второе свойство (улучшается ядрами). Потомкам оно не передаётся, а такого питомца нельзя выпустить. ${OFF.ru}`],
+ ['','Следите за энергией',`Если у питомца 0 энергии, за помощь другим Куколок не дадут. ${OFF.ru}`],
+ ['','Слабые свойства скрещивайте между собой',`Грибы, Бутылка и Штанга легко теряются при скрещивании с сильными свойствами. Штанга и Бутылка хорошо растут в паре. ${PL.ru}`]],
+en:[
+ ['warn','No mutagen when changing traits',`A mutagen raises total attributes, not base ones, and lowers the chance of the trait switching to the one you want. ${PL.en}`],
+ ['','Look at base attributes',`Only those are passed on. The pet list can sort by "Base total attribute". ${OFF.en}`],
+ ['','Awakened pets make the best parents',`Once the main attributes reach the required values, the pet gets an "awakened" badge. Its trait grows more easily. ${OFF.en}`],
+ ['','Breed special pets yourself',`If you lend a special pet to another player, there is no chance of a special offspring. ${OFF.en}`],
+ ['','Evolution is separate',`A mutated pet can evolve and gain a second trait (upgraded with cores). It is not passed to offspring, and such a pet can't be released. ${OFF.en}`],
+ ['','Watch energy',`At 0 energy your pet earns no Pupae for helping others. ${OFF.en}`],
+ ['','Breed weak traits with each other',`Mushrooms, Bottle and Barbell are easily lost when bred with strong traits. Barbell and Bottle grow well as a pair. ${PL.en}`]]};
+
+let lang = 'ru', filter = 'all';
+try { const s = localStorage.getItem('pets-lang'); if (s === 'en' || s === 'ru') lang = s; } catch(e) {}
+
+const $ = s => document.querySelector(s);
+const dots = d => `<span class="dots">${[0,1,2,3].map(i => `<i style="${d !== null && i < d ? `background:var(--d${d})` : ''}"></i>`).join('')}</span>`;
+
+function render(){
+  const L = T[lang];
+  document.documentElement.lang = lang;
+  document.title = L.title;
+  document.querySelectorAll('[data-t]').forEach(el => { el.innerHTML = L[el.dataset.t] ?? ''; });
+  document.querySelectorAll('.lang button').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === lang));
+  $('#terms').innerHTML = TERMS[lang].map(([t,d]) => `<div><dt>${t}</dt><dd>${d}</dd></div>`).join('');
+  $('#basics').innerHTML = BASICS[lang].map(x => `<li>${x}</li>`).join('');
+  $('#inherit').innerHTML = INHERIT[lang].map(x => `<li>${x}</li>`).join('');
+  $('#steps').innerHTML = STEPS[lang].map(x => `<li>${x}</li>`).join('');
+  $('#tips').innerHTML = TIPS[lang].map(([c,h,p]) => `<div class="box ${c}"><h3>${h}</h3><p>${p}</p></div>`).join('');
+  $('#filters').innerHTML = [['all',L.all],['hi',L.dom_hi],['mid',L.dom_mid],['lo',L.dom_lo]]
+    .map(([k,l]) => `<button type="button" data-f="${k}" aria-pressed="${k === filter}">${l}</button>`).join('');
+  $('#grid').innerHTML = TRAITS.filter(t => filter === 'all' || t.g === filter).map(t => {
+    const x = t[lang];
+    return `<article class="trait">
+      <button type="button" class="shot" data-img="img/pets/${t.id}.jpg" aria-label="${x.n}"><img src="img/pets/${t.id}.jpg" alt="${x.n}" loading="lazy"></button>
+      <div class="body">
+        <div class="name"><b>${x.n}</b></div>
+        <div class="attrs" title="${L.main}">${t.a.map(k => `<span>${A[k][lang]}</span>`).join('')}</div>
+        <div class="eff">${x.e}${x.v ? ` <b>${x.v}</b>` : ''}</div>
+        <div class="dom">${dots(t.d)} ${L.dom}: ${x.dl}</div>
+        <div class="note">${x.r}</div>
+      </div></article>`;
+  }).join('');
+}
+
+document.addEventListener('click', e => {
+  const lb = e.target.closest('.lang button');
+  if (lb) { lang = lb.dataset.lang; try { localStorage.setItem('pets-lang', lang); } catch(err) {} render(); return; }
+  const fb = e.target.closest('#filters button');
+  if (fb) { filter = fb.dataset.f; render(); return; }
+  const sb = e.target.closest('.shot');
+  if (sb) { const d = $('#zoom'); d.querySelector('img').src = sb.dataset.img; d.showModal(); return; }
+});
+$('#zoom').addEventListener('click', e => { if (e.target.tagName !== 'IMG') $('#zoom').close(); });
+
+render();
+</script>
+</body>
+</html>
