@@ -117,6 +117,15 @@ dialog button{position:absolute;top:8px;right:8px;background:var(--surface);colo
 <div class="tblwrap" style="margin-top:18px"><table class="tbl" id="classes"></table></div>
 <p class="muted" style="font-size:.88rem;margin-top:10px" data-t="classes_note"></p>
 
+<h2 data-t="h_evo"></h2>
+<p data-t="evo_lead"></p>
+<ol class="steps" id="evosteps"></ol>
+<h3 style="margin:22px 0 10px" data-t="h_evo_gives"></h3>
+<ul id="evogives"></ul>
+<div class="tblwrap" style="margin-top:6px"><table class="tbl" id="evotbl"></table></div>
+<h3 style="margin:22px 0 10px" data-t="h_evo_limits"></h3>
+<ul id="evolimits"></ul>
+
 <h2 data-t="h_traits"></h2>
 <p class="muted" data-t="traits_lead"></p>
 <div class="filters" id="filters"></div>
@@ -157,7 +166,7 @@ ru:{
  h_reach:'Когда до какого уровня можно дорасти',
  reach_lead:`Это <b>оценка</b>: она посчитана по настройкам игры ${DAT.ru}, а распределение очков между атрибутами случайное. Главное, от чего зависит уровень, — класс питомца и мутация. Смотрите на <b>меньший</b> из двух главных атрибутов: уровень даёт именно он.`,
  reach_how:'Как считали: базовые атрибуты класса делятся на 5 атрибутов (главным обычно достаётся больше), при каждом уровне питомца 2 случайных атрибута получают +1, а мутация добавляет ещё очки, которые раскидываются по всем пяти атрибутам случайно. Эволюция и эффекты групп добавляют сверху — в оценку они не включены.',
- classes_note:'«Главный атрибут взрослого» — примерное значение каждого из двух главных атрибутов, когда питомец дорос до макс. уровня. Разброс большой: из-за случайности один главный атрибут может быть заметно ниже другого. В колонке «Уровень свойства» стрелка — без мутации → с мутацией.',
+ classes_note:'«Главный атрибут взрослого» — примерное значение каждого из двух главных атрибутов, когда питомец дорос до макс. уровня. Разброс большой: из-за случайности один главный атрибут может быть заметно ниже другого. В колонке «Уровень свойства» стрелка — без мутации → с мутацией. По опыту игроков, на S ур. 3 и 4 получить почти нереально, даже с мутацией: для них нужны SS.',
  th_lv:'Уровень', th_need:'Нужно', th_who:'Кто дотягивает', th_when:'Когда примерно',
  th_cls:'Класс', th_sum:'Сумма базовых атрибутов', th_max:'Макс. уровень', th_mut:'Очки мутации', th_main:'Главный атрибут взрослого', th_mainm:'… с мутацией', th_trait:'Уровень свойства',
  traits_lead:'Нажмите на скриншот, чтобы открыть его целиком. Точки показывают, насколько легко свойство передаётся потомку, если у второго родителя другое свойство: чем больше точек, тем легче.',
@@ -180,7 +189,7 @@ en:{
  h_reach:'Which level you can realistically reach',
  reach_lead:`This is an <b>estimate</b>: it is worked out from the game's settings ${DAT.en}, but points are spread between attributes at random. What matters most is the pet's class and mutation. Look at the <b>lower</b> of the two main attributes: that one decides the level.`,
  reach_how:'How we estimated: the class\'s base attributes are split across 5 attributes (main ones usually get more), each pet level gives +1 to 2 random attributes, and a mutation adds more points spread across all five at random. Evolution and group effects add on top and are not included.',
- classes_note:'"Main attribute, adult" is a rough value of each of the two main attributes once the pet reaches max level. The spread is wide: by chance one main attribute can end up well below the other. In the "Trait level" column the arrow means without mutation → with mutation.',
+ classes_note:'"Main attribute, adult" is a rough value of each of the two main attributes once the pet reaches max level. The spread is wide: by chance one main attribute can end up well below the other. In the "Trait level" column the arrow means without mutation → with mutation. Players report that lv 3 and 4 are almost impossible on S, even with a mutation: you need SS for them.',
  th_lv:'Level', th_need:'Needs', th_who:'Who gets there', th_when:'Roughly when',
  th_cls:'Class', th_sum:'Base attribute total', th_max:'Max level', th_mut:'Mutation points', th_main:'Main attribute, adult', th_mainm:'… with mutation', th_trait:'Trait level',
  traits_lead:'Tap a screenshot to see it in full. Dots show how easily a trait passes to the offspring when the other parent has a different trait: more dots, easier. Screenshots are from the Russian version; names are translated.',
@@ -316,15 +325,15 @@ en:[
 // [level, need, who, when]
 const REACH = {
 ru:[
- ['Ур. 2','60','Взрослый питомец класса A; B — только с удачной мутацией; любой S.',`Начало. Первые A и S дают его почти сразу. Поднять до ур. 2 <i>все</i> нужные свойства — «дело нескольких месяцев». ${PL.ru}`],
- ['Ур. 3','90','S с мутацией или сильный S (сумма 240–280); SS — уже без мутации.',`Средний этап: несколько поколений скрещивания S-питомцев. С 60 до 90 — минимум одно скрещивание (за раз атрибут растёт максимум на 30), на деле обычно 2–4. ${PL.ru}`],
- ['Ур. 4','120','SS-питомец, лучше с мутацией. Верхний S (280) — только с очень удачной мутацией.','Поздний этап: нужны SS-питомцы и ещё несколько поколений. Тут сильно помогают совпадающие главные атрибуты у пары и Тотем стойкости.'],
+ ['Ур. 2','60','Взрослый питомец класса A; B — только с удачной мутацией; любой S.',`Начало. Первые A и S дают его почти сразу. Если у вас есть Конклав ур. 2, поднять до ур. 2 и <i>все</i> остальные свойства — дело нескольких месяцев: Конклав передаётся потомку хуже всех, поэтому, скрещивая его с другими питомцами, можно забрать любое свойство. Без Конклава это заметно дольше. ${PL.ru}`],
+ ['Ур. 3','90','SS-питомец. На S почти нереально, даже с мутацией.',`Средний этап: нужны SS-питомцы и несколько поколений скрещивания. С 60 до 90 — минимум одно скрещивание (за раз атрибут растёт максимум на 30), на деле обычно 2–4. ${PL.ru}`],
+ ['Ур. 4','120','SS-питомец, лучше с мутацией. На S почти нереально.','Поздний этап: нужны SS-питомцы и ещё несколько поколений. Тут сильно помогают совпадающие главные атрибуты у пары и Тотем стойкости.'],
  ['Ур. 5','150','Верхние SS (сумма 400+) с мутацией.','Очень поздно. Нужна долгая линия SS-питомцев с одинаковым свойством и главными атрибутами.'],
  ['Ур. 6','180','Только лучшие SS (440–480) с удачной мутацией плюс эволюция или группы.','Потолок. Сейчас почти недостижимо — скорее цель «на годы», чем план.']],
 en:[
- ['Lv 2','60','Adult class A pet; B only with a lucky mutation; any S.',`Early game. Your first A and S pets get it almost right away. Getting <i>all</i> the traits you need to lv 2 takes "a few months". ${PL.en}`],
- ['Lv 3','90','S with a mutation, or a strong S (total 240–280); SS even without a mutation.',`Mid game: a few generations of breeding S pets. 60 → 90 takes at least one breeding (an attribute grows by 30 at most per breeding), usually 2–4 in practice. ${PL.en}`],
- ['Lv 4','120','An SS pet, ideally mutated. A top S (280) only with a very lucky mutation.','Late game: you need SS pets and several more generations. Matching main attributes in the pair and a Fortitude Totem help a lot.'],
+ ['Lv 2','60','Adult class A pet; B only with a lucky mutation; any S.',`Early game. Your first A and S pets get it almost right away. If you have Conclave at lv 2, getting <i>all</i> the other traits to lv 2 takes a few months: Conclave passes on worse than any other trait, so breeding it with other pets lets you take any trait. Without Conclave it takes noticeably longer. ${PL.en}`],
+ ['Lv 3','90','An SS pet. Almost impossible on S, even with a mutation.',`Mid game: you need SS pets and a few generations of breeding. 60 → 90 takes at least one breeding (an attribute grows by 30 at most per breeding), usually 2–4 in practice. ${PL.en}`],
+ ['Lv 4','120','An SS pet, ideally mutated. Almost impossible on S.','Late game: you need SS pets and several more generations. Matching main attributes in the pair and a Fortitude Totem help a lot.'],
  ['Lv 5','150','Top SS (total 400+) with a mutation.','Very late. Needs a long line of SS pets with the same trait and main attributes.'],
  ['Lv 6','180','Only the best SS (440–480) with a lucky mutation, plus evolution or groups.','The ceiling. Close to unreachable today — more a long-term goal than a plan.']]};
 
@@ -334,8 +343,72 @@ const CLASSES = [
  ['C','80','20','≈44','≈30','≈40','1'],
  ['B','120','30','≈66','≈45','≈60','1 → 2'],
  ['A','160','40','≈88','≈60','≈80','2'],
- ['S','200–280','50','≈110–160','≈80–100','≈100–130','2–3 → 3–4'],
+ ['S','200–280','50','≈110–160','≈70–85','≈80–90','2'],
  ['SS','300–480','50','≈175–280','≈105–150','≈140–200','3–4 → 4–6']];
+
+const EVO = {
+ru:{
+ h:'Эволюция', gives:'Что даёт эволюция', limits:'Ограничения',
+ lead:'Эволюция — отдельный способ усилить питомца, который <b>уже мутировал</b>. Она не связана со скрещиванием: ничего из неё потомкам не передаётся. Зато она даёт второе свойство и много бонусных атрибутов.',
+ steps:[
+  `<b>Кто может эволюционировать.</b> Только мутировавший питомец, у которого есть нужный потенциал, — у него открывается кнопка «Эволюция». ${OFF.ru}`,
+  `<b>Этап 1 — набрать прогресс.</b> Используйте эссенцию или других мутировавших питомцев как материал. Скормленные питомцы пропадают, но часть потраченных на них ресурсов возвращается. Если скормить питомца, который сам был в процессе эволюции, весь его прогресс перейдёт к новому. Разным видам нужно разное количество прогресса, эксклюзивным — больше. ${OFF.ru}`,
+  `<b>Бонусы прогресса.</b> На определённых порогах прогресса питомец получает дополнительные бонусные атрибуты — уже по ходу эволюции. ${OFF.ru}`,
+  `<b>Этап 2 — заполнить шкалу.</b> Тут нужны материалы своего типа (для разных видов — разные). Этап разбит на ступени («Глубокая мудрость», «Чистая сила», «Стальная отвага»), и каждая даёт плюс ко <b>всем</b> атрибутам. ${OFF.ru}`,
+  `<b>Эволюция завершена.</b> Питомец становится «молодой формой» подвида более высокого уровня и его снова можно качать. Все бонусы атрибутов, набранные по пути, остаются, и сверху даётся ещё одна прибавка. ${OFF.ru}`],
+ givesL:[
+  `<b>Второе свойство — свойство эволюции.</b> Того же типа, что и базовое (у питомца с Ложей — эволюционная Ложа). У него <b>20 уровней</b>. ${OFF.ru} ${DAT.ru}`,
+  `<b>Эффекты складываются.</b> Итоговый эффект = лучший базовый эффект + лучший эффект эволюции, и они могут быть у разных питомцев. Например, Конклав может дать до 10% от базового свойства и ещё до 10% от эволюции — всего до 20%. ${OFF.ru}`,
+  `<b>Как качать свойство эволюции.</b> Материалами (для разных видов — разные). Каждая попытка случайно оказывается сильной («Отлично!»), средней («Неплохо») или слабой («Слабовато») и даёт разный прогресс. На уровень нужно от 50 000 до 200 000 прогресса, на все 20 уровней — около 2,6 млн (у Алхимии и Рыбалки около 2,3 млн). ${OFF.ru} ${DAT.ru}`,
+  `<b>Базовое свойство тоже растёт.</b> Бонусы атрибутов от эволюции входят в общие атрибуты, а уровень базового свойства считается именно по ним. ${DAT.ru}`,
+  `<b>Обмен атрибутами.</b> Эволюционировавший питомец может поменяться <b>базовыми</b> атрибутами с другим питомцем того же вида. Так можно подтянуть главные атрибуты до порога следующего уровня базового свойства. ${OFF.ru}`,
+  `<b>Редактор форм.</b> Можно переключаться между открытыми обликами. Это только внешний вид. ${OFF.ru}`],
+ limitsL:[
+  `Эволюционировавшего питомца <b>нельзя выпустить</b>. ${OFF.ru}`,
+  `Свойство эволюции <b>не передаётся</b> потомкам. ${OFF.ru}`,
+  `Одинаковые свойства эволюции не складываются: действует только самое сильное. ${OFF.ru}`,
+  `Питомца, который сейчас эволюционирует, нельзя выбрать для обмена атрибутами. Если питомец предлагает помощь в скрещивании, сначала отмените запрос. ${OFF.ru}`],
+ th:['Свойство','Свойство эволюции, ур. 1 → ур. 20','Для сравнения: базовое на ур. 6']},
+en:{
+ h:'Evolution', gives:'What evolution gives', limits:'Limits',
+ lead:'Evolution is a separate way to strengthen a pet that has <b>already mutated</b>. It has nothing to do with breeding: none of it passes to offspring. In return it gives a second trait and a lot of bonus attributes.',
+ steps:[
+  `<b>Who can evolve.</b> Only a mutated pet with the required potential — it gets an "Evolution" button. ${OFF.en}`,
+  `<b>Stage 1 — build progress.</b> Use essence or other mutated pets as material. Pets used this way are gone, but you get back part of what you spent on them. If you feed in a pet that was itself evolving, all its progress carries over. Different species need different amounts of progress; exclusive pets need more. ${OFF.en}`,
+  `<b>Progress bonuses.</b> At certain progress thresholds the pet gets extra bonus attributes along the way. ${OFF.en}`,
+  `<b>Stage 2 — fill the bar.</b> This needs species-specific materials. The stage is split into steps ("Deep Wisdom", "Pure Strength", "Steel Courage"), and each one adds to <b>all</b> attributes. ${OFF.en}`,
+  `<b>Evolution complete.</b> The pet becomes the "young form" of a higher sub-species and can be levelled again. Every attribute bonus earned along the way stays, and you get one more boost on top. ${OFF.en}`],
+ givesL:[
+  `<b>A second trait — the evolved trait.</b> Same type as the base trait (a Lodge pet gets an evolved Lodge). It has <b>20 levels</b>. ${OFF.en} ${DAT.en}`,
+  `<b>Effects add up.</b> Final effect = best base effect + best evolved effect, and they can come from different pets. E.g. Conclave can give up to 10% from the base trait plus up to 10% from evolution — up to 20% in total. ${OFF.en}`,
+  `<b>Levelling the evolved trait.</b> With materials (different per species). Each attempt is randomly strong ("Excellent!"), average ("Not bad") or weak ("Meh") and gives different progress. A level takes 50,000 to 200,000 progress; all 20 levels take about 2.6 million (about 2.3 million for Alchemy and Fishing). ${OFF.en} ${DAT.en}`,
+  `<b>The base trait grows too.</b> Evolution's attribute bonuses count towards total attributes, and that's what the base trait level uses. ${DAT.en}`,
+  `<b>Attribute swap.</b> An evolved pet can swap <b>base</b> attributes with another pet of the same species. This lets you push the main attributes up to the next base trait threshold. ${OFF.en}`,
+  `<b>Form editor.</b> Switch freely between unlocked looks. Cosmetic only. ${OFF.en}`],
+ limitsL:[
+  `An evolved pet <b>can't be released</b>. ${OFF.en}`,
+  `The evolved trait is <b>not passed</b> to offspring. ${OFF.en}`,
+  `Identical evolved traits don't stack: only the strongest works. ${OFF.en}`,
+  `A pet that is evolving can't be picked for an attribute swap. If the pet is offered for breeding help, cancel that request first. ${OFF.en}`],
+ th:['Trait','Evolved trait, lv 1 → lv 20','For comparison: base at lv 6']}};
+
+// trait id, evolved lv1 → lv20, base lv6 (RU / EN where wording differs)
+const EVOTBL = [
+ ['conclave','+0.5 → +10%','+10%'],
+ ['lodge','+5 → +100%','+100%'],
+ ['dates','+5 → +100%','+100%'],
+ ['barbell','+5 → +100%','+100%'],
+ ['league','+15 → +300','+250'],
+ ['wells','+2.5 → +50%','+50%'],
+ ['crystals','+2.5 → +50%','+50%'],
+ ['abyss','+2.5 → +50%','+50%'],
+ ['mushrooms','+2.5 → +50%','+50%'],
+ ['bottle','+2.5 → +50%','+50%'],
+ ['portal',{ru:'+2,5 → +50%',en:'+2.5 → +50%'},'+50%'],
+ ['arena',{ru:'шанс 11 → 30% получить Шкатулку господства при картах',en:'11 → 30% chance of a Dominance Casket from cards'},{ru:'5 смотрителей',en:'5 keepers'}],
+ ['fishing',{ru:'шанс 40 → 78% доп. награды при вылове (с дневным лимитом)',en:'40 → 78% chance of an extra catch reward (daily cap)'},{ru:'5 смотрителей',en:'5 keepers'}],
+ ['alchemy',{ru:'доп. шанс получить больше наград с реторт',en:'extra chance of more rewards from retorts'},{ru:'шанс 100%',en:'100% chance'}]];
+const PORTAL = {ru:'Палата порталов', en:'Portal Chamber'}, ALCH = {ru:'Алхимия I и II', en:'Alchemy I & II'};
 
 let lang = 'ru', filter = 'all';
 try { const s = localStorage.getItem('pets-lang'); if (s === 'en' || s === 'ru') lang = s; } catch(e) {}
@@ -355,6 +428,18 @@ function render(){
     REACH[lang].map(([l,n,w,t]) => `<tr><td class="n">${l}</td><td class="num">${n}</td><td>${w}</td><td>${t}</td></tr>`).join('') + '</tbody>';
   $('#classes').innerHTML = `<thead><tr><th>${L.th_cls}</th><th>${L.th_sum}</th><th>${L.th_max}</th><th>${L.th_mut}</th><th>${L.th_main}</th><th>${L.th_mainm}</th><th>${L.th_trait}</th></tr></thead><tbody>` +
     CLASSES.map(([c,...r]) => `<tr><td class="n">${c}</td>${r.map(x => `<td class="num">${x}</td>`).join('')}</tr>`).join('') + '</tbody>';
+  const E = EVO[lang];
+  const loc = v => typeof v === 'object' ? v[lang] : (lang === 'ru' ? v.replace(/(\d)\.(\d)/g, '$1,$2') : v);
+  const tname = id => id === 'portal' ? PORTAL[lang] : id === 'alchemy' ? ALCH[lang] : TRAITS.find(t => t.id === id)[lang].n;
+  $('[data-t="h_evo"]').innerHTML = E.h;
+  $('[data-t="evo_lead"]').innerHTML = E.lead;
+  $('[data-t="h_evo_gives"]').innerHTML = E.gives;
+  $('[data-t="h_evo_limits"]').innerHTML = E.limits;
+  $('#evosteps').innerHTML = E.steps.map(x => `<li>${x}</li>`).join('');
+  $('#evogives').innerHTML = E.givesL.map(x => `<li>${x}</li>`).join('');
+  $('#evolimits').innerHTML = E.limitsL.map(x => `<li>${x}</li>`).join('');
+  $('#evotbl').innerHTML = `<thead><tr>${E.th.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>` +
+    EVOTBL.map(([id,a,b]) => `<tr><td>${tname(id)}</td><td>${loc(a)}</td><td>${loc(b)}</td></tr>`).join('') + '</tbody>';
   $('#terms').innerHTML = TERMS[lang].map(([t,d]) => `<div><dt>${t}</dt><dd>${d}</dd></div>`).join('');
   $('#basics').innerHTML = BASICS[lang].map(x => `<li>${x}</li>`).join('');
   $('#inherit').innerHTML = INHERIT[lang].map(x => `<li>${x}</li>`).join('');
