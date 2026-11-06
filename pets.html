@@ -37,7 +37,16 @@ li b,p b{color:var(--ink)}
 .terms div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
 .terms dt{font-weight:600}
 .terms dd{margin:2px 0 0;color:var(--muted);font-size:.9rem}
-.thr{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0 6px;max-width:560px}
+.thr{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:14px 0 6px;max-width:760px}
+.tag.data{border-color:#4a5a7a;color:#a9bde4}
+.tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+.tbl{border-collapse:collapse;width:100%;min-width:560px;font-size:.9rem}
+.tbl th,.tbl td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl tr:last-child td{border-bottom:0}
+.tbl th{background:var(--surface2);font-weight:600;color:var(--muted);font-size:.8rem}
+.tbl td{background:var(--surface)}
+.tbl td.n{font:400 1.1rem "Prata",serif;white-space:nowrap}
+.tbl td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
 .thr div{background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
 .thr b{display:block;font:400 1.35rem "Prata",serif}
 .thr small{color:var(--muted);font-size:.78rem}
@@ -70,7 +79,7 @@ dialog::backdrop{background:rgba(8,5,10,.85)}
 dialog img{display:block;width:100%;border-radius:10px}
 dialog button{position:absolute;top:8px;right:8px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:999px;width:34px;height:34px;font-size:1.1rem;cursor:pointer}
 [hidden]{display:none!important}
-@media (max-width:520px){h1{font-size:1.6rem}.thr{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}
+@media (max-width:520px){h1{font-size:1.6rem}.thr{grid-template-columns:repeat(3,1fr)}.grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -96,14 +105,17 @@ dialog button{position:absolute;top:8px;right:8px;background:var(--surface);colo
 <h2 data-t="h_levels"></h2>
 <div class="box">
   <p data-t="levels"></p>
-  <div class="thr">
-    <div><b>—</b><small data-t="lv1"></small></div>
-    <div><b>60</b><small data-t="lv2"></small></div>
-    <div><b>90</b><small data-t="lv3"></small></div>
-    <div><b>120</b><small data-t="lv4"></small></div>
-  </div>
+  <div class="thr" id="thr"></div>
   <p class="muted" style="font-size:.88rem;margin:8px 0 0" data-t="levels_note"></p>
 </div>
+<ul id="levelfacts" style="margin-top:14px"></ul>
+
+<h2 data-t="h_reach"></h2>
+<p data-t="reach_lead"></p>
+<div class="tblwrap"><table class="tbl" id="reach"></table></div>
+<p class="muted" style="font-size:.88rem;margin-top:10px" data-t="reach_how"></p>
+<div class="tblwrap" style="margin-top:18px"><table class="tbl" id="classes"></table></div>
+<p class="muted" style="font-size:.88rem;margin-top:10px" data-t="classes_note"></p>
 
 <h2 data-t="h_traits"></h2>
 <p class="muted" data-t="traits_lead"></p>
@@ -129,18 +141,25 @@ dialog button{position:absolute;top:8px;right:8px;background:var(--surface);colo
 <script>
 const OFF = {ru:'<span class="tag off">из игры</span>', en:'<span class="tag off">from the game</span>'};
 const PL  = {ru:'<span class="tag pl">опыт игроков</span>', en:'<span class="tag pl">player tip</span>'};
+const DAT = {ru:'<span class="tag data">файлы игры</span>', en:'<span class="tag data">game files</span>'};
 
 const T = {
 ru:{
  title:'Скрещивание питомцев', back:'← Все калькуляторы',
  h1:'Скрещивание <span>питомцев</span>',
  lead:'Как поднять уровень свойства питомца: что передаётся потомку, как подбирать пару и каких ошибок избегать.',
- legend:`${OFF.ru} — так написано в справке самой игры. ${PL.ru} — вывод опытного игрока, в игре этого не пишут.`,
+ legend:`${OFF.ru} — так написано в справке самой игры. ${DAT.ru} — взято из настроек игры (версия 1.05.10). ${PL.ru} — вывод опытного игрока, в игре этого не пишут.`,
  h_terms:'Словарь', h_basics:'Как устроено скрещивание', h_levels:'Уровни свойства', h_traits:'Все свойства',
  h_inherit:'Что получает потомок', h_steps:'Как поднять свойство: по шагам', h_tips:'Главное',
- levels:'Свойство повышается само, когда <b>оба</b> главных атрибута питомца дорастают до нужного числа. На скриншотах ниже зелёное число — уже хватает, красное — пока нет.',
- lv1:'Ур. 1 · ничего не даёт', lv2:'Ур. 2', lv3:'Ур. 3', lv4:'Ур. 4',
- levels_note:'Исключение — Алхимия: ей нужно 50 / 80 / 110.',
+ levels:'Свойство повышается само, когда <b>оба</b> главных атрибута питомца дорастают до нужного числа. У свойства 6 уровней: ур. 1 ничего не даёт, а с ур. 2 по ур. 6 эффект растёт ступенями. Число под уровнем — сколько нужно <b>каждого</b> из двух главных атрибутов.',
+ lv:['Ур. 1 · без эффекта','Ур. 2 · ступень 1','Ур. 3 · ступень 2','Ур. 4 · ступень 3','Ур. 5 · ступень 4','Ур. 6 · максимум'],
+ levels_note:'Исключение — Алхимия I и II: им нужно на 10 меньше — 50 / 80 / 110 / 140 / 170.',
+ h_reach:'Когда до какого уровня можно дорасти',
+ reach_lead:`Это <b>оценка</b>: она посчитана по настройкам игры ${DAT.ru}, а распределение очков между атрибутами случайное. Главное, от чего зависит уровень, — класс питомца и мутация. Смотрите на <b>меньший</b> из двух главных атрибутов: уровень даёт именно он.`,
+ reach_how:'Как считали: базовые атрибуты класса делятся на 5 атрибутов (главным обычно достаётся больше), при каждом уровне питомца 2 случайных атрибута получают +1, а мутация добавляет ещё очки, которые раскидываются по всем пяти атрибутам случайно. Эволюция и эффекты групп добавляют сверху — в оценку они не включены.',
+ classes_note:'«Главный атрибут взрослого» — примерное значение каждого из двух главных атрибутов, когда питомец дорос до макс. уровня. Разброс большой: из-за случайности один главный атрибут может быть заметно ниже другого. В колонке «Уровень свойства» стрелка — без мутации → с мутацией.',
+ th_lv:'Уровень', th_need:'Нужно', th_who:'Кто дотягивает', th_when:'Когда примерно',
+ th_cls:'Класс', th_sum:'Сумма базовых атрибутов', th_max:'Макс. уровень', th_mut:'Очки мутации', th_main:'Главный атрибут взрослого', th_mainm:'… с мутацией', th_trait:'Уровень свойства',
  traits_lead:'Нажмите на скриншот, чтобы открыть его целиком. Точки показывают, насколько легко свойство передаётся потомку, если у второго родителя другое свойство: чем больше точек, тем легче.',
  traits_note:'В игре есть ещё свойство «Палата Порталов» (больше монет очищения за отдых). Скриншота его нет.',
  all:'Все', dom_hi:'Передаются легко', dom_mid:'Средне', dom_lo:'Передаются плохо',
@@ -152,12 +171,18 @@ en:{
  title:'Pet Breeding Guide', back:'← All calculators',
  h1:'Pet <span>breeding</span>',
  lead:'How to raise a pet\'s trait level: what the offspring inherits, how to choose a partner, and which mistakes to avoid.',
- legend:`${OFF.en} — stated in the game's own help. ${PL.en} — learned by an experienced player; the game doesn't say it.`,
+ legend:`${OFF.en} — stated in the game's own help. ${DAT.en} — taken from the game's settings (version 1.05.10). ${PL.en} — learned by an experienced player; the game doesn't say it.`,
  h_terms:'Glossary', h_basics:'How breeding works', h_levels:'Trait levels', h_traits:'All traits',
  h_inherit:'What the offspring gets', h_steps:'Raising a trait, step by step', h_tips:'Key points',
- levels:'A trait levels up by itself once <b>both</b> of the pet\'s main attributes reach the required number. In the screenshots below a green number means it\'s enough, red means not yet.',
- lv1:'Lv 1 · does nothing', lv2:'Lv 2', lv3:'Lv 3', lv4:'Lv 4',
- levels_note:'Exception: Alchemy needs 50 / 80 / 110.',
+ levels:'A trait levels up by itself once <b>both</b> of the pet\'s main attributes reach the required number. A trait has 6 levels: lv 1 does nothing, and from lv 2 to lv 6 the effect grows step by step. The number under each level is how much of <b>each</b> of the two main attributes you need.',
+ lv:['Lv 1 · no effect','Lv 2 · step 1','Lv 3 · step 2','Lv 4 · step 3','Lv 5 · step 4','Lv 6 · max'],
+ levels_note:'Exception: Alchemy I and II need 10 less — 50 / 80 / 110 / 140 / 170.',
+ h_reach:'Which level you can realistically reach',
+ reach_lead:`This is an <b>estimate</b>: it is worked out from the game's settings ${DAT.en}, but points are spread between attributes at random. What matters most is the pet's class and mutation. Look at the <b>lower</b> of the two main attributes: that one decides the level.`,
+ reach_how:'How we estimated: the class\'s base attributes are split across 5 attributes (main ones usually get more), each pet level gives +1 to 2 random attributes, and a mutation adds more points spread across all five at random. Evolution and group effects add on top and are not included.',
+ classes_note:'"Main attribute, adult" is a rough value of each of the two main attributes once the pet reaches max level. The spread is wide: by chance one main attribute can end up well below the other. In the "Trait level" column the arrow means without mutation → with mutation.',
+ th_lv:'Level', th_need:'Needs', th_who:'Who gets there', th_when:'Roughly when',
+ th_cls:'Class', th_sum:'Base attribute total', th_max:'Max level', th_mut:'Mutation points', th_main:'Main attribute, adult', th_mainm:'… with mutation', th_trait:'Trait level',
  traits_lead:'Tap a screenshot to see it in full. Dots show how easily a trait passes to the offspring when the other parent has a different trait: more dots, easier. Screenshots are from the Russian version; names are translated.',
  traits_note:'The game also has a "Portal Chamber" trait (more purification coins from rest). There is no screenshot of it.',
  all:'All', dom_hi:'Pass on easily', dom_mid:'Average', dom_lo:'Pass on poorly',
@@ -171,14 +196,14 @@ ru:[
  ['Свойство','Особый бонус питомца, например +20% доверия в ложе. У каждого питомца одно свойство.'],
  ['Главные атрибуты','Два из пяти атрибутов питомца, от которых зависит уровень его свойства.'],
  ['Базовые атрибуты','Атрибуты «от рождения», без бонусов. Только они передаются потомку.'],
- ['Общие атрибуты','Базовые плюс бонусы от мутации, уровней и групп. Видны в игре, но потомку не передаются.'],
+ ['Общие атрибуты','Базовые плюс бонусы от мутации, уровней и групп. Именно по ним считается уровень свойства, но потомку они не передаются.'],
  ['Инициатор','Тот, кто запускает скрещивание и платит Куколками. Яйцо получает только он.'],
  ['Доминантность','Насколько легко свойство переходит к потомку, когда у родителей разные свойства.']],
 en:[
  ['Trait','A pet\'s special bonus, e.g. +20% Lodge trust. Each pet has one trait.'],
  ['Main attributes','Two of the pet\'s five attributes that decide its trait level.'],
  ['Base attributes','The pet\'s "born with" values, without bonuses. Only these pass to the offspring.'],
- ['Total attributes','Base plus bonuses from mutation, levels and groups. Shown in game, but not inherited.'],
+ ['Total attributes','Base plus bonuses from mutation, levels and groups. They decide the trait level, but are not inherited.'],
  ['Initiator','The player who starts the breeding and pays Pupae. Only they get the egg.'],
  ['Dominance','How easily a trait passes to the offspring when the parents have different traits.']]};
 
@@ -186,20 +211,20 @@ const A = {st:{ru:'Стойкость',en:'Fortitude'},ag:{ru:'Ловкость'
 
 // d: dominance 1..4 (null = unknown), g: filter group
 const TRAITS = [
- {id:'conclave',a:['st','ag'],d:null,g:'mid',ru:{n:'Конклав',e:'Больше очков совета',v:'+2 / 4 / 6%',dl:'плохо, получить сложно',r:'Самое нужное свойство. Питомец с ним стоит 25–40 тыс., обычно его покупают за донат. Чтобы перенести Конклав своему питомцу, пробуют скрещивать его с Грибами, Бутылкой или Штангой.'},en:{n:'Conclave',e:'More council points',v:'+2 / 4 / 6%',dl:'poorly, hard to get',r:'The most wanted trait. A pet with it costs 25–40k and is usually bought with real money. To move Conclave onto your own pet, players breed it with Mushrooms, Bottle or Barbell.'}},
- {id:'lodge',a:['in','lo'],d:4,g:'hi',ru:{n:'Ложа',e:'Больше доверия в ложе',v:'+20 / 40 / 60%',dl:'очень легко',r:'Доверие поднимает кровные узы, а они — господство. Стоит вывести одним из первых: со временем даёт заметный прирост.'},en:{n:'Lodge',e:'More Lodge trust',v:'+20 / 40 / 60%',dl:'very easily',r:'Trust raises blood bonds, and those raise dominance. Worth getting early: a noticeable gain over time.'}},
- {id:'league',a:['ag','lo'],d:2,g:'mid',ru:{n:'Лига',e:'Больше авторитета в лиге',v:'+50 / 100 / 150',dl:'средне',r:'Стоит вывести одним из первых.'},en:{n:'League',e:'More League prestige',v:'+50 / 100 / 150',dl:'average',r:'Worth getting early.'}},
- {id:'wells',a:['st','in'],d:3,g:'hi',ru:{n:'Колодцы',e:'Больше авторитета с Колодцев слёз в Нижнем мире',v:'+10 / 20 / 30%',dl:'легко',r:'Полезное и важное.'},en:{n:'Wells',e:'More prestige from the Wells of Tears in the Underworld',v:'+10 / 20 / 30%',dl:'easily',r:'Useful and important.'}},
- {id:'crystals',a:['ch','st'],d:2,g:'mid',ru:{n:'Кристаллы',e:'Больше капитала и вклада гильдии с Кристаллитов',v:'+10 / 20% …',dl:'средне',r:'Важное: капитал гильдии нужен для приливов и снабжения в войне.'},en:{n:'Crystals',e:'More guild capital and contribution from Crystallites',v:'+10 / 20% …',dl:'average',r:'Important: guild capital pays for tides and war supplies.'}},
- {id:'arena',a:['st','ag'],d:4,g:'hi',ru:{n:'Арена',e:'Первые 1 / 2 / 3 смотрителя за день получают двойные награды за карты',v:'',dl:'очень легко',r:'Полезное: больше талантов или навыков с арены.'},en:{n:'Arena',e:'Your first 1 / 2 / 3 keepers each day get double card rewards',v:'',dl:'very easily',r:'Useful: more talents or skills from the arena.'}},
- {id:'abyss',a:['ch','in'],d:2,g:'mid',ru:{n:'Тёмная пропасть',e:'Больше Тёмных монет',v:'+10 / 20 / 30%',dl:'средне',r:'Окупается со временем. Многие его недооценивают.'},en:{n:'Dark Abyss',e:'More Dark Coins',v:'+10 / 20 / 30%',dl:'average',r:'Pays off over time. Many players underrate it.'}},
- {id:'alchemy2',a:['st','ag'],d:3,g:'hi',ru:{n:'Алхимия II',e:'Шанс 20 / 40% … получить вдвое больше крови и мышей с Реторт Близости, Силы, Интеллекта и Талантов',v:'',dl:'легко',r:'Хорошее свойство.'},en:{n:'Alchemy II',e:'20 / 40% … chance to get double blood and bats from the Retorts of Intimacy, Strength, Intellect and Talents',v:'',dl:'easily',r:'A good trait.'}},
+ {id:'conclave',a:['st','ag'],d:null,g:'mid',ru:{n:'Конклав',e:'Больше очков совета',v:'+2 / 4 / 6 / 8 / 10%',dl:'плохо, получить сложно',r:'Самое нужное свойство. Питомец с ним стоит 25–40 тыс., обычно его покупают за донат. Чтобы перенести Конклав своему питомцу, пробуют скрещивать его с Грибами, Бутылкой или Штангой.'},en:{n:'Conclave',e:'More council points',v:'+2 / 4 / 6 / 8 / 10%',dl:'poorly, hard to get',r:'The most wanted trait. A pet with it costs 25–40k and is usually bought with real money. To move Conclave onto your own pet, players breed it with Mushrooms, Bottle or Barbell.'}},
+ {id:'lodge',a:['in','lo'],d:4,g:'hi',ru:{n:'Ложа',e:'Больше доверия в ложе',v:'+20 / 40 / 60 / 80 / 100%',dl:'очень легко',r:'Доверие поднимает кровные узы, а они — господство. Стоит вывести одним из первых: со временем даёт заметный прирост.'},en:{n:'Lodge',e:'More Lodge trust',v:'+20 / 40 / 60 / 80 / 100%',dl:'very easily',r:'Trust raises blood bonds, and those raise dominance. Worth getting early: a noticeable gain over time.'}},
+ {id:'league',a:['ag','lo'],d:2,g:'mid',ru:{n:'Лига',e:'Больше авторитета в лиге',v:'+50 / 100 / 150 / 200 / 250',dl:'средне',r:'Стоит вывести одним из первых.'},en:{n:'League',e:'More League prestige',v:'+50 / 100 / 150 / 200 / 250',dl:'average',r:'Worth getting early.'}},
+ {id:'wells',a:['st','in'],d:3,g:'hi',ru:{n:'Колодцы',e:'Больше авторитета с Колодцев слёз в Нижнем мире',v:'+10 / 20 / 30 / 40 / 50%',dl:'легко',r:'Полезное и важное.'},en:{n:'Wells',e:'More prestige from the Wells of Tears in the Underworld',v:'+10 / 20 / 30 / 40 / 50%',dl:'easily',r:'Useful and important.'}},
+ {id:'crystals',a:['ch','st'],d:2,g:'mid',ru:{n:'Кристаллы',e:'Больше капитала и вклада гильдии с Кристаллитов',v:'+10 / 20 / 30 / 40 / 50%',dl:'средне',r:'Важное: капитал гильдии нужен для приливов и снабжения в войне.'},en:{n:'Crystals',e:'More guild capital and contribution from Crystallites',v:'+10 / 20 / 30 / 40 / 50%',dl:'average',r:'Important: guild capital pays for tides and war supplies.'}},
+ {id:'arena',a:['st','ag'],d:4,g:'hi',ru:{n:'Арена',e:'Первые 1 / 2 / 3 / 4 / 5 смотрителей за день получают двойные награды за карты',v:'',dl:'очень легко',r:'Полезное: больше талантов или навыков с арены.'},en:{n:'Arena',e:'Your first 1 / 2 / 3 / 4 / 5 keepers each day get double card rewards',v:'',dl:'very easily',r:'Useful: more talents or skills from the arena.'}},
+ {id:'abyss',a:['ch','in'],d:2,g:'mid',ru:{n:'Тёмная пропасть',e:'Больше Тёмных монет',v:'+10 / 20 / 30 / 40 / 50%',dl:'средне',r:'Окупается со временем. Многие его недооценивают.'},en:{n:'Dark Abyss',e:'More Dark Coins',v:'+10 / 20 / 30 / 40 / 50%',dl:'average',r:'Pays off over time. Many players underrate it.'}},
+ {id:'alchemy2',a:['st','ag'],d:3,g:'hi',ru:{n:'Алхимия II',e:'Шанс 20 / 40 / 60 / 80 / 100% получить вдвое больше крови и мышей с Реторт Близости, Силы, Интеллекта и Талантов',v:'',dl:'легко',r:'Хорошее свойство.'},en:{n:'Alchemy II',e:'20 / 40 / 60 / 80 / 100% chance to get double blood and bats from the Retorts of Intimacy, Strength, Intellect and Talents',v:'',dl:'easily',r:'A good trait.'}},
  {id:'alchemy1',a:['ch','lo'],d:3,g:'hi',ru:{n:'Алхимия I',e:'То же, но с Реторт Хаоса, Влечения, Харизмы и Воли',v:'',dl:'легко',r:'Полезна меньше, чем Алхимия II. Нужна, если вы копите мышей и кровь и прокачали Реторту влечения.'},en:{n:'Alchemy I',e:'Same, but from the Retorts of Chaos, Desire, Charisma and Will',v:'',dl:'easily',r:'Less useful than Alchemy II. Worth it if you stockpile bats and blood and have levelled the Retort of Desire.'}},
- {id:'dates',a:['ch','lo'],d:2,g:'mid',ru:{n:'Свидания',e:'Больше доверия за свидания',v:'+20 / 40 / 60%',dl:'средне',r:'Похоже на Ложу, но бонус идёт только за свидания с партнёрами.'},en:{n:'Dates',e:'More trust from dates',v:'+20 / 40 / 60%',dl:'average',r:'Like Lodge, but the bonus only applies to dates with partners.'}},
- {id:'bottle',a:['ag','in'],d:1,g:'lo',ru:{n:'Бутылка',e:'Больше очков навыков на тренировках',v:'+10 / 20 / 30%',dl:'плохо',r:'Полезное. Хорошо растёт, если скрещивать её со Штангой.'},en:{n:'Bottle',e:'More skill points from training',v:'+10 / 20 / 30%',dl:'poorly',r:'Useful. Grows well when bred with Barbell.'}},
- {id:'barbell',a:['st','lo'],d:1,g:'lo',ru:{n:'Штанга',e:'Больше опыта таланта на тренировках',v:'+20 / 40 / 60%',dl:'плохо',r:'Растёт медленно. Лучше растёт в паре с Бутылкой.'},en:{n:'Barbell',e:'More talent XP from training',v:'+20 / 40 / 60%',dl:'poorly',r:'Grows slowly. Does better paired with Bottle.'}},
- {id:'mushrooms',a:['st','ag'],d:1,g:'lo',ru:{n:'Грибы',e:'Больше опыта таланта с Мракоморов в Нижнем мире',v:'+10 / 20 / 30%',dl:'плохо',r:'Полезно, если вы копите господство. Иначе можно не торопиться.'},en:{n:'Mushrooms',e:'More talent XP from Gloomshrooms in the Underworld',v:'+10 / 20 / 30%',dl:'poorly',r:'Useful if you are building dominance. Otherwise no rush.'}},
- {id:'fishing',a:['st','lo'],d:4,g:'hi',ru:{n:'Рыбалка',e:'Первое обновление попытки бесплатно для 1 / 2 / 3 смотрителей',v:'',dl:'легче всех',r:'Самое бесполезное свойство, но передаётся потомку легче всех и часто «перебивает» нужное.'},en:{n:'Fishing',e:'First attempt refresh is free for 1 / 2 / 3 keepers',v:'',dl:'most easily of all',r:'The least useful trait, yet it passes on most easily and often overrides the one you want.'}},
+ {id:'dates',a:['ch','lo'],d:2,g:'mid',ru:{n:'Свидания',e:'Больше доверия за свидания',v:'+20 / 40 / 60 / 80 / 100%',dl:'средне',r:'Похоже на Ложу, но бонус идёт только за свидания с партнёрами.'},en:{n:'Dates',e:'More trust from dates',v:'+20 / 40 / 60 / 80 / 100%',dl:'average',r:'Like Lodge, but the bonus only applies to dates with partners.'}},
+ {id:'bottle',a:['ag','in'],d:1,g:'lo',ru:{n:'Бутылка',e:'Больше очков навыков на тренировках',v:'+10 / 20 / 30 / 40 / 50%',dl:'плохо',r:'Полезное. Хорошо растёт, если скрещивать её со Штангой.'},en:{n:'Bottle',e:'More skill points from training',v:'+10 / 20 / 30 / 40 / 50%',dl:'poorly',r:'Useful. Grows well when bred with Barbell.'}},
+ {id:'barbell',a:['st','lo'],d:1,g:'lo',ru:{n:'Штанга',e:'Больше опыта таланта на тренировках',v:'+20 / 40 / 60 / 80 / 100%',dl:'плохо',r:'Растёт медленно. Лучше растёт в паре с Бутылкой.'},en:{n:'Barbell',e:'More talent XP from training',v:'+20 / 40 / 60 / 80 / 100%',dl:'poorly',r:'Grows slowly. Does better paired with Bottle.'}},
+ {id:'mushrooms',a:['st','ag'],d:1,g:'lo',ru:{n:'Грибы',e:'Больше опыта таланта с Мракоморов в Нижнем мире',v:'+10 / 20 / 30 / 40 / 50%',dl:'плохо',r:'Полезно, если вы копите господство. Иначе можно не торопиться.'},en:{n:'Mushrooms',e:'More talent XP from Gloomshrooms in the Underworld',v:'+10 / 20 / 30 / 40 / 50%',dl:'poorly',r:'Useful if you are building dominance. Otherwise no rush.'}},
+ {id:'fishing',a:['st','lo'],d:4,g:'hi',ru:{n:'Рыбалка',e:'Первое обновление попытки бесплатно для 1 / 2 / 3 / 4 / 5 смотрителей',v:'',dl:'легче всех',r:'Самое бесполезное свойство, но передаётся потомку легче всех и часто «перебивает» нужное.'},en:{n:'Fishing',e:'First attempt refresh is free for 1 / 2 / 3 / 4 / 5 keepers',v:'',dl:'most easily of all',r:'The least useful trait, yet it passes on most easily and often overrides the one you want.'}},
 ];
 
 const BASICS = {
@@ -274,6 +299,44 @@ en:[
  ['','Watch energy',`At 0 energy your pet earns no Pupae for helping others. ${OFF.en}`],
  ['','Breed weak traits with each other',`Mushrooms, Bottle and Barbell are easily lost when bred with strong traits. Barbell and Bottle grow well as a pair. ${PL.en}`]]};
 
+const THR = ['—', 60, 90, 120, 150, 180];
+
+const LEVELFACTS = {
+ru:[
+ `<b>Уровень считается по общим атрибутам</b>, то есть вместе с бонусами от уровней, мутации, групп и эволюции. Поэтому мутация сразу поднимает уровень свойства, хотя потомку её бонус не передаётся. ${DAT.ru}`,
+ `<b>Окно «Свойство» в игре прокручивается.</b> Сначала видно ур. 1–4, ниже — ур. 5 (150) и ур. 6 (180). ${DAT.ru}`,
+ `<b>Нужны оба главных атрибута.</b> Если один 130, а второй 95, у питомца ур. 3: решает меньший. ${OFF.ru}`,
+ `<b>Пробуждённый питомец</b> — тот, у которого главные атрибуты уже дотянули до порога. Его свойство растёт легче. ${OFF.ru}`],
+en:[
+ `<b>The level uses total attributes</b>, i.e. including bonuses from levels, mutation, groups and evolution. So a mutation raises the trait level right away, even though its bonus isn't passed to offspring. ${DAT.en}`,
+ `<b>The in-game "Trait" window scrolls.</b> You first see lv 1–4; lv 5 (150) and lv 6 (180) are below. ${DAT.en}`,
+ `<b>Both main attributes count.</b> If one is 130 and the other 95, the pet is lv 3: the lower one decides. ${OFF.en}`,
+ `<b>An awakened pet</b> is one whose main attributes have reached the threshold. Its trait grows more easily. ${OFF.en}`]};
+
+// [level, need, who, when]
+const REACH = {
+ru:[
+ ['Ур. 2','60','Взрослый питомец класса A; B — только с удачной мутацией; любой S.',`Начало. Первые A и S дают его почти сразу. Поднять до ур. 2 <i>все</i> нужные свойства — «дело нескольких месяцев». ${PL.ru}`],
+ ['Ур. 3','90','S с мутацией или сильный S (сумма 240–280); SS — уже без мутации.',`Средний этап: несколько поколений скрещивания S-питомцев. С 60 до 90 — минимум одно скрещивание (за раз атрибут растёт максимум на 30), на деле обычно 2–4. ${PL.ru}`],
+ ['Ур. 4','120','SS-питомец, лучше с мутацией. Верхний S (280) — только с очень удачной мутацией.','Поздний этап: нужны SS-питомцы и ещё несколько поколений. Тут сильно помогают совпадающие главные атрибуты у пары и Тотем стойкости.'],
+ ['Ур. 5','150','Верхние SS (сумма 400+) с мутацией.','Очень поздно. Нужна долгая линия SS-питомцев с одинаковым свойством и главными атрибутами.'],
+ ['Ур. 6','180','Только лучшие SS (440–480) с удачной мутацией плюс эволюция или группы.','Потолок. Сейчас почти недостижимо — скорее цель «на годы», чем план.']],
+en:[
+ ['Lv 2','60','Adult class A pet; B only with a lucky mutation; any S.',`Early game. Your first A and S pets get it almost right away. Getting <i>all</i> the traits you need to lv 2 takes "a few months". ${PL.en}`],
+ ['Lv 3','90','S with a mutation, or a strong S (total 240–280); SS even without a mutation.',`Mid game: a few generations of breeding S pets. 60 → 90 takes at least one breeding (an attribute grows by 30 at most per breeding), usually 2–4 in practice. ${PL.en}`],
+ ['Lv 4','120','An SS pet, ideally mutated. A top S (280) only with a very lucky mutation.','Late game: you need SS pets and several more generations. Matching main attributes in the pair and a Fortitude Totem help a lot.'],
+ ['Lv 5','150','Top SS (total 400+) with a mutation.','Very late. Needs a long line of SS pets with the same trait and main attributes.'],
+ ['Lv 6','180','Only the best SS (440–480) with a lucky mutation, plus evolution or groups.','The ceiling. Close to unreachable today — more a long-term goal than a plan.']]};
+
+// [class, base total, max level, mutation points, main adult, main mutated, trait level]
+const CLASSES = [
+ ['D','40','10','≈22','≈15','≈20','1'],
+ ['C','80','20','≈44','≈30','≈40','1'],
+ ['B','120','30','≈66','≈45','≈60','1 → 2'],
+ ['A','160','40','≈88','≈60','≈80','2'],
+ ['S','200–280','50','≈110–160','≈80–100','≈100–130','2–3 → 3–4'],
+ ['SS','300–480','50','≈175–280','≈105–150','≈140–200','3–4 → 4–6']];
+
 let lang = 'ru', filter = 'all';
 try { const s = localStorage.getItem('pets-lang'); if (s === 'en' || s === 'ru') lang = s; } catch(e) {}
 
@@ -286,6 +349,12 @@ function render(){
   document.title = L.title;
   document.querySelectorAll('[data-t]').forEach(el => { el.innerHTML = L[el.dataset.t] ?? ''; });
   document.querySelectorAll('.lang button').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === lang));
+  $('#thr').innerHTML = THR.map((v,i) => `<div><b>${v}</b><small>${L.lv[i]}</small></div>`).join('');
+  $('#levelfacts').innerHTML = LEVELFACTS[lang].map(x => `<li>${x}</li>`).join('');
+  $('#reach').innerHTML = `<thead><tr><th>${L.th_lv}</th><th>${L.th_need}</th><th>${L.th_who}</th><th>${L.th_when}</th></tr></thead><tbody>` +
+    REACH[lang].map(([l,n,w,t]) => `<tr><td class="n">${l}</td><td class="num">${n}</td><td>${w}</td><td>${t}</td></tr>`).join('') + '</tbody>';
+  $('#classes').innerHTML = `<thead><tr><th>${L.th_cls}</th><th>${L.th_sum}</th><th>${L.th_max}</th><th>${L.th_mut}</th><th>${L.th_main}</th><th>${L.th_mainm}</th><th>${L.th_trait}</th></tr></thead><tbody>` +
+    CLASSES.map(([c,...r]) => `<tr><td class="n">${c}</td>${r.map(x => `<td class="num">${x}</td>`).join('')}</tr>`).join('') + '</tbody>';
   $('#terms').innerHTML = TERMS[lang].map(([t,d]) => `<div><dt>${t}</dt><dd>${d}</dd></div>`).join('');
   $('#basics').innerHTML = BASICS[lang].map(x => `<li>${x}</li>`).join('');
   $('#inherit').innerHTML = INHERIT[lang].map(x => `<li>${x}</li>`).join('');
