@@ -166,7 +166,7 @@ ru:{
  h_reach:'Когда до какого уровня можно дорасти',
  reach_lead:`Это <b>оценка</b>: она посчитана по настройкам игры ${DAT.ru}, а распределение очков между атрибутами случайное. Главное, от чего зависит уровень, — класс питомца и мутация. Смотрите на <b>меньший</b> из двух главных атрибутов: уровень даёт именно он.`,
  reach_how:'Как считали: базовые атрибуты класса делятся на 5 атрибутов (главным обычно достаётся больше), при каждом уровне питомца 2 случайных атрибута получают +1, а мутация добавляет ещё очки, которые раскидываются по всем пяти атрибутам случайно. Эволюция и эффекты групп добавляют сверху — в оценку они не включены.',
- classes_note:'«Главный атрибут взрослого» — примерное значение каждого из двух главных атрибутов, когда питомец дорос до макс. уровня. Разброс большой: из-за случайности один главный атрибут может быть заметно ниже другого. В колонке «Уровень свойства» стрелка — без мутации → с мутацией. По опыту игроков, на S ур. 3 и 4 получить почти нереально, даже с мутацией: для них нужны SS.',
+ classes_note:'«Главный атрибут взрослого» — примерное значение каждого из двух главных атрибутов, когда питомец дорос до макс. уровня. Разброс большой: из-за случайности один главный атрибут может быть заметно ниже другого. В колонке «Уровень свойства» стрелка — без мутации → с мутацией. По опыту игроков, на B не выводится даже ур. 2, а на S ур. 3 и 4 получить почти нереально, даже с мутацией: для них нужны SS.',
  th_lv:'Уровень', th_need:'Нужно', th_who:'Кто дотягивает', th_when:'Когда примерно',
  th_cls:'Класс', th_sum:'Сумма базовых атрибутов', th_max:'Макс. уровень', th_mut:'Очки мутации', th_main:'Главный атрибут взрослого', th_mainm:'… с мутацией', th_trait:'Уровень свойства',
  traits_lead:'Нажмите на скриншот, чтобы открыть его целиком. Точки показывают, насколько легко свойство передаётся потомку, если у второго родителя другое свойство: чем больше точек, тем легче.',
@@ -189,7 +189,7 @@ en:{
  h_reach:'Which level you can realistically reach',
  reach_lead:`This is an <b>estimate</b>: it is worked out from the game's settings ${DAT.en}, but points are spread between attributes at random. What matters most is the pet's class and mutation. Look at the <b>lower</b> of the two main attributes: that one decides the level.`,
  reach_how:'How we estimated: the class\'s base attributes are split across 5 attributes (main ones usually get more), each pet level gives +1 to 2 random attributes, and a mutation adds more points spread across all five at random. Evolution and group effects add on top and are not included.',
- classes_note:'"Main attribute, adult" is a rough value of each of the two main attributes once the pet reaches max level. The spread is wide: by chance one main attribute can end up well below the other. In the "Trait level" column the arrow means without mutation → with mutation. Players report that lv 3 and 4 are almost impossible on S, even with a mutation: you need SS for them.',
+ classes_note:'"Main attribute, adult" is a rough value of each of the two main attributes once the pet reaches max level. The spread is wide: by chance one main attribute can end up well below the other. In the "Trait level" column the arrow means without mutation → with mutation. Players report that B can't reach even lv 2, and lv 3 and 4 are almost impossible on S, even with a mutation: you need SS for them.',
  th_lv:'Level', th_need:'Needs', th_who:'Who gets there', th_when:'Roughly when',
  th_cls:'Class', th_sum:'Base attribute total', th_max:'Max level', th_mut:'Mutation points', th_main:'Main attribute, adult', th_mainm:'… with mutation', th_trait:'Trait level',
  traits_lead:'Tap a screenshot to see it in full. Dots show how easily a trait passes to the offspring when the other parent has a different trait: more dots, easier. Screenshots are from the Russian version; names are translated.',
@@ -325,13 +325,13 @@ en:[
 // [level, need, who, when]
 const REACH = {
 ru:[
- ['Ур. 2','60','Взрослый питомец класса A; B — только с удачной мутацией; любой S.',`Начало. Первые A и S дают его почти сразу. Если у вас есть Конклав ур. 2, поднять до ур. 2 и <i>все</i> остальные свойства — дело нескольких месяцев: Конклав передаётся потомку хуже всех, поэтому, скрещивая его с другими питомцами, можно забрать любое свойство. Без Конклава это заметно дольше. ${PL.ru}`],
+ ['Ур. 2','60','Взрослый питомец класса A или любой S. На B не выводится, даже с мутацией.',`Начало. Первые A и S дают его почти сразу. Если у вас есть Конклав ур. 2, поднять до ур. 2 и <i>все</i> остальные свойства — дело нескольких месяцев: Конклав передаётся потомку хуже всех, поэтому, скрещивая его с другими питомцами, можно забрать любое свойство. Без Конклава это заметно дольше. ${PL.ru}`],
  ['Ур. 3','90','SS-питомец. На S почти нереально, даже с мутацией.',`Средний этап: нужны SS-питомцы и несколько поколений скрещивания. С 60 до 90 — минимум одно скрещивание (за раз атрибут растёт максимум на 30), на деле обычно 2–4. ${PL.ru}`],
  ['Ур. 4','120','SS-питомец, лучше с мутацией. На S почти нереально.','Поздний этап: нужны SS-питомцы и ещё несколько поколений. Тут сильно помогают совпадающие главные атрибуты у пары и Тотем стойкости.'],
  ['Ур. 5','150','Верхние SS (сумма 400+) с мутацией.','Очень поздно. Нужна долгая линия SS-питомцев с одинаковым свойством и главными атрибутами.'],
  ['Ур. 6','180','Только лучшие SS (440–480) с удачной мутацией плюс эволюция или группы.','Потолок. Сейчас почти недостижимо — скорее цель «на годы», чем план.']],
 en:[
- ['Lv 2','60','Adult class A pet; B only with a lucky mutation; any S.',`Early game. Your first A and S pets get it almost right away. If you have Conclave at lv 2, getting <i>all</i> the other traits to lv 2 takes a few months: Conclave passes on worse than any other trait, so breeding it with other pets lets you take any trait. Without Conclave it takes noticeably longer. ${PL.en}`],
+ ['Lv 2','60','An adult class A pet or any S. Not possible on B, even with a mutation.',`Early game. Your first A and S pets get it almost right away. If you have Conclave at lv 2, getting <i>all</i> the other traits to lv 2 takes a few months: Conclave passes on worse than any other trait, so breeding it with other pets lets you take any trait. Without Conclave it takes noticeably longer. ${PL.en}`],
  ['Lv 3','90','An SS pet. Almost impossible on S, even with a mutation.',`Mid game: you need SS pets and a few generations of breeding. 60 → 90 takes at least one breeding (an attribute grows by 30 at most per breeding), usually 2–4 in practice. ${PL.en}`],
  ['Lv 4','120','An SS pet, ideally mutated. Almost impossible on S.','Late game: you need SS pets and several more generations. Matching main attributes in the pair and a Fortitude Totem help a lot.'],
  ['Lv 5','150','Top SS (total 400+) with a mutation.','Very late. Needs a long line of SS pets with the same trait and main attributes.'],
@@ -341,7 +341,7 @@ en:[
 const CLASSES = [
  ['D','40','10','≈22','≈15','≈20','1'],
  ['C','80','20','≈44','≈30','≈40','1'],
- ['B','120','30','≈66','≈45','≈60','1 → 2'],
+ ['B','120','30','≈66','≈40','≈50','1'],
  ['A','160','40','≈88','≈60','≈80','2'],
  ['S','200–280','50','≈110–160','≈70–85','≈80–90','2'],
  ['SS','300–480','50','≈175–280','≈105–150','≈140–200','3–4 → 4–6']];
